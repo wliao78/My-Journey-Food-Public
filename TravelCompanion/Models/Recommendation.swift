@@ -6,7 +6,7 @@ enum RecommendationCategory: String, CaseIterable, Identifiable, Codable {
     case eat
 
     var id: String { rawValue }
-    var title: String { "吃喝" }
+    var title: String { String(localized: "吃喝") }
     var symbol: String { "fork.knife" }
     var tintName: String { "orange" }
 }
@@ -16,7 +16,7 @@ enum TravelMode: String, CaseIterable, Identifiable, Codable {
     case driving
 
     var id: String { rawValue }
-    var title: String { self == .walking ? "步行" : "驾车" }
+    var title: String { self == .walking ? String(localized: "步行") : String(localized: "驾车") }
     var symbol: String { self == .walking ? "figure.walk" : "car.fill" }
     var transportType: MKDirectionsTransportType { self == .walking ? .walking : .automobile }
 }
@@ -67,15 +67,16 @@ struct Recommendation: Identifiable {
         return "\(item.name ?? "place")|\(coordinate.latitude)|\(coordinate.longitude)"
     }
 
-    var title: String { mapItem.name ?? "未知地点" }
+    var title: String { mapItem.name ?? String(localized: "未知地点") }
 
     var subtitle: String {
-        cachedSubtitle ?? mapItem.placemark.title ?? "附近"
+        cachedSubtitle ?? mapItem.placemark.title ?? String(localized: "附近")
     }
 
     var formattedTravelTime: String {
-        guard let travelTime else { return "时间未知" }
-        return "\(max(1, Int((travelTime / 60).rounded()))) 分钟"
+        guard let travelTime else { return String(localized: "时间未知") }
+        return String(format: NSLocalizedString("%lld 分钟", comment: "Travel time in minutes"),
+                      max(1, Int((travelTime / 60).rounded())))
     }
 
     var formattedDistance: String {

@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocationManagerDelegate {
     @Published private(set) var location: CLLocation?
-    @Published private(set) var placeName = "正在定位…"
+    @Published private(set) var placeName = String(localized: "正在定位…")
     @Published private(set) var authorizationStatus: CLAuthorizationStatus
     @Published private(set) var errorMessage: String?
 
@@ -25,9 +25,9 @@ final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocat
         case .authorizedAlways, .authorizedWhenInUse:
             manager.requestLocation()
         case .denied, .restricted:
-            errorMessage = "定位权限未开启，请在系统设置中允许定位。"
+            errorMessage = String(localized: "定位权限未开启，请在系统设置中允许定位。")
         @unknown default:
-            errorMessage = "暂时无法获取位置。"
+            errorMessage = String(localized: "暂时无法获取位置。")
         }
     }
 
@@ -54,9 +54,9 @@ final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocat
 
     private func reverseGeocode(_ location: CLLocation) async {
         guard let placemark = try? await geocoder.reverseGeocodeLocation(location).first else {
-            placeName = "当前位置"
+            placeName = String(localized: "当前位置")
             return
         }
-        placeName = placemark.locality ?? placemark.subLocality ?? placemark.name ?? "当前位置"
+        placeName = placemark.locality ?? placemark.subLocality ?? placemark.name ?? String(localized: "当前位置")
     }
 }

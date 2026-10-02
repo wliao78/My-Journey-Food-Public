@@ -51,11 +51,11 @@ enum AIRecommendationError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .missingKey: "请先在设置中填写所选服务商的 API Key。"
-        case .invalidResponse: "AI 回复无法读取，请重试。"
-        case .rejectedResult: "AI 推荐未通过校验，已保留上次结果；请重试。"
-        case .requestFailed(let code): "AI 连接失败（\(code)），请检查密钥和网络。"
-        case .networkUnavailable: "网络暂时不可用，已保留上次推荐。"
+        case .missingKey: String(localized: "请先在设置中填写所选服务商的 API Key。")
+        case .invalidResponse: String(localized: "AI 回复无法读取，请重试。")
+        case .rejectedResult: String(localized: "AI 推荐未通过校验，已保留上次结果；请重试。")
+        case .requestFailed(let code): String(format: NSLocalizedString("AI 连接失败（%lld），请检查密钥和网络。", comment: "AI HTTP error"), code)
+        case .networkUnavailable: String(localized: "网络暂时不可用，已保留上次推荐。")
         }
     }
 }
@@ -81,6 +81,10 @@ final class AIModelRouter {
 
     func rank(_ context: AIContext) async throws -> [AIRankedPlace] {
         guard let key = keyStore.load(), !key.isEmpty else { throw AIRecommendationError.missingKey }
+        guard PublicAIConsent.granted else {
+            throw NSError(domain: "AIConsent", code: 1, userInfo: [NSLocalizedDescriptionKey:
+                String(localized: "请先在设置中同意向所选 AI 服务商发送资料。")])
+        }
         let complex = context.userRequest.count > 50 || context.userRequest.contains("但是") || context.userRequest.contains("同时")
         if !complex {
             do {
@@ -95,12 +99,13 @@ final class AIModelRouter {
 
     func searchQueries(for requestText: String) async throws -> [String] {
         guard let key = keyStore.load(), !key.isEmpty else { throw AIRecommendationError.missingKey }
+        guard PublicAIConsent.granted else { return [] }
         let schema: [String: Any] = [
             "type": "object", "additionalProperties": false,
             "properties": ["queries": ["type": "array", "items": ["type": "string"]]],
             "required": ["queries"]
         ]
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "model": AIConfig.defaultModel,
             "store": false,
             "max_output_tokens": 600,
@@ -109,6 +114,8 @@ final class AIModelRouter {
             "input": requestText,
             "text": ["format": ["type": "json_schema", "name": "food_search_queries", "strict": true, "schema": schema]]
         ]
+        body["instructions"] = (body["instructions"] as? String ?? "") +
+            "\nReturn English search keywords regardless of the user's input language."
         let (data, response) = try await PublicAITransport.send(body: body, key: key, timeout: 25)
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
             throw AIRecommendationError.requestFailed((response as? HTTPURLResponse)?.statusCode ?? 0)
@@ -147,7 +154,7 @@ final class AIModelRouter {
             ]],
             "required": ["places"]
         ]
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "model": model,
             "store": false,
             "max_output_tokens": 2_200,
@@ -156,6 +163,10 @@ final class AIModelRouter {
             "input": input,
             "text": ["format": ["type": "json_schema", "name": "travel_ranking", "strict": true, "schema": schema]]
         ]
+        body["instructions"] = (body["instructions"] as? String ?? "") +
+            (Locale.current.language.languageCode?.identifier == "zh"
+                ? "\nUse Simplified Chinese for reason and suggestion."
+                : "\nUse natural English for reason and suggestion, even though these instructions are Chinese.")
         let started = Date()
         let data: Data
         let response: URLResponse

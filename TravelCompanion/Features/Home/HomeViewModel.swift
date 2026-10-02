@@ -15,7 +15,7 @@ final class HomeViewModel: ObservableObject {
     @Published private(set) var loadingCategory: RecommendationCategory?
     @Published private(set) var errorMessage: String?
     @Published private(set) var isShowingCachedResults = false
-    @Published private(set) var loadingMessage = "正在重新推荐…"
+    @Published private(set) var loadingMessage = String(localized: "正在重新推荐…")
 
     private let weatherService = WeatherService()
     private let recommendationService = RecommendationService()
@@ -36,11 +36,11 @@ final class HomeViewModel: ObservableObject {
         guard !draft.isEmpty else { return }
         if draft.hasPrefix("sk-") {
             context = ""
-            errorMessage = "检测到 API Key；已清空输入内容，请只在设置页填写密钥。"
+            errorMessage = String(localized: "检测到 API Key；已清空输入内容，请只在设置页填写密钥。")
             return
         }
         guard location != nil else {
-            errorMessage = "正在获取当前位置，请稍后再发送。"
+            errorMessage = String(localized: "正在获取当前位置，请稍后再发送。")
             return
         }
         guard !isLoading else { return }
@@ -63,7 +63,7 @@ final class HomeViewModel: ObservableObject {
         let requestedMode = travelMode
         loadingCategory = category
         isLoading = true
-        loadingMessage = "正在更新\(category.title)推荐…"
+        loadingMessage = String(format: NSLocalizedString("正在更新%@推荐…", comment: "Refreshing a recommendation category"), category.title)
         errorMessage = nil
 
         await updateWeather(at: location)
@@ -80,7 +80,7 @@ final class HomeViewModel: ObservableObject {
                 recommendations[category] = values
                 recommendationTravelMode = requestedMode
                 if values.isEmpty {
-                    errorMessage = "扩大搜索范围后仍未找到符合条件的\(category.title)地点；可清除条件并单独刷新。"
+                    errorMessage = String(format: NSLocalizedString("扩大搜索范围后仍未找到符合条件的%@地点；可清除条件并单独刷新。", comment: "No matching places"), category.title)
                 }
                 cacheService.save(recommendations, near: location)
                 isShowingCachedResults = false
@@ -88,7 +88,7 @@ final class HomeViewModel: ObservableObject {
         } catch {
             if travelMode == requestedMode {
                 if (error as NSError).domain == MKError.errorDomain {
-                    errorMessage = "地图服务暂时无法搜索吃喝地点，请稍后刷新。已有推荐仍可查看。"
+                    errorMessage = String(localized: "地图服务暂时无法搜索吃喝地点，请稍后刷新。已有推荐仍可查看。")
                 } else {
                     errorMessage = error.localizedDescription
                 }
@@ -116,11 +116,7 @@ final class HomeViewModel: ObservableObject {
         } catch {
             weather = .unavailable
             let failure = error as NSError
-            if failure.domain.contains("WDSJWTAuthenticator") && failure.code == 2 {
-                weatherErrorMessage = "Apple 天气服务授权失败（代码 2）。请检查 Apple Developer 中此 App ID 的 WeatherKit App Service 与 Capability 是否都已启用，并更新签名描述文件。"
-            } else {
-                weatherErrorMessage = "Apple 天气服务暂不可用（\(failure.domain)，代码 \(failure.code)）。请稍后重试。"
-            }
+            weatherErrorMessage = String(localized: "天气暂不可用，请稍后重试。")
             logger.error("WeatherKit failed domain=\(failure.domain, privacy: .public) code=\(failure.code) description=\(error.localizedDescription, privacy: .public)")
         }
     }

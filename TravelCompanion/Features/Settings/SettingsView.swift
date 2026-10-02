@@ -7,6 +7,7 @@ struct SettingsView: View {
     @State private var hasSavedKey = APIKeyStore().load() != nil
     @State private var isTesting = false
     @State private var message: String?
+    @State private var aiConsent = PublicAIConsent.granted
 
     var body: some View {
         NavigationStack {
@@ -26,6 +27,7 @@ struct SettingsView: View {
                     }
                     .onChange(of: providerID) { _, _ in
                         hasSavedKey = APIKeyStore().load() != nil
+                        aiConsent = PublicAIConsent.granted
                         keyInput = ""
                         message = nil
                     }
@@ -41,8 +43,8 @@ struct SettingsView: View {
                         if APIKeyStore().save(keyInput) {
                             keyInput = ""
                             hasSavedKey = true
-                            message = "密钥已保存在本机钥匙串。"
-                        } else { message = "保存失败，请重试。" }
+                            message = String(localized: "密钥已保存在本机钥匙串。")
+                        } else { message = String(localized: "保存失败，请重试。") }
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(keyInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -52,7 +54,7 @@ struct SettingsView: View {
                             defer { isTesting = false }
                             do {
                                 try await AIModelRouter().testConnection()
-                                message = "所选服务商连接成功。"
+                                message = String(localized: "所选服务商连接成功。")
                             } catch { message = error.localizedDescription }
                         }
                     }
@@ -62,7 +64,7 @@ struct SettingsView: View {
                         if APIKeyStore().clear() {
                             hasSavedKey = false
                             keyInput = ""
-                            message = "密钥已从本机删除。"
+                            message = String(localized: "密钥已从本机删除。")
                         }
                     }
                     .buttonStyle(.bordered)
@@ -74,6 +76,10 @@ struct SettingsView: View {
                     Label("隐私说明", systemImage: "hand.raised.fill")
                         .font(.headline)
                     Text("密钥只保存在这台设备的钥匙串。推荐时，位置、时间、天气、输入条件和评价会发送给所选 AI 服务商。")
+                        .font(.footnote)
+                    Toggle("同意向所选 AI 服务商发送资料", isOn: $aiConsent)
+                        .onChange(of: aiConsent) { _, value in PublicAIConsent.set(value) }
+                    Text("只有同意后才会发送位置、时间、天气、输入条件和评价以生成推荐。可随时关闭；关闭后仍可查看演示内容。")
                         .font(.footnote)
                     if let message { Text(message).foregroundStyle(.secondary) }
                     }

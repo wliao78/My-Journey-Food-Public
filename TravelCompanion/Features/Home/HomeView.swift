@@ -107,7 +107,7 @@ struct HomeView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(model.weatherErrorMessage == nil)
-                .accessibilityLabel(model.weatherErrorMessage == nil ? weatherText : "天气未知，点击查看原因")
+                .accessibilityLabel(model.weatherErrorMessage == nil ? weatherText : String(localized: "天气未知，点击查看原因"))
             }
         }
         .padding(16)
@@ -119,7 +119,7 @@ struct HomeView: View {
 
     private var weatherText: String {
         model.weather == .unavailable
-            ? "天气未知"
+            ? String(localized: "天气未知")
             : "\(model.weather.temperature.value.formatted(.number.precision(.fractionLength(1))))°"
     }
 
@@ -188,7 +188,26 @@ struct HomeView: View {
                 }
                 .padding(.bottom, 4)
 
-                if items.isEmpty {
+                if items.isEmpty && APIKeyStore().load() == nil && !model.isLoading {
+                    Text("演示推荐 · 非真实店铺")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(FoodTheme.accent)
+                    ForEach(0..<6, id: \.self) { index in
+                        HStack(spacing: 12) {
+                            Image(systemName: ["birthday.cake", "cup.and.saucer", "fork.knife", "takeoutbag.and.cup.and.straw", "wineglass", "leaf"][index])
+                                .frame(width: 32)
+                                .foregroundStyle(FoodTheme.accent)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(demoTitles[index]).font(.headline)
+                                Text("设置服务商与位置后，才会搜索真实地点并核对条件。")
+                                    .font(.caption).foregroundStyle(FoodTheme.secondaryText)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .padding(14)
+                        .foodPanel()
+                    }
+                } else if items.isEmpty {
                     ContentUnavailableView(
                         model.isLoading ? "正在寻找附近餐饮" : "暂无推荐",
                         systemImage: "fork.knife",
@@ -232,6 +251,12 @@ struct HomeView: View {
             }
         )
         .accessibilityIdentifier("foodRecommendationScroll")
+    }
+
+    private var demoTitles: [String] {
+        [String(localized: "街区面包店"), String(localized: "独立咖啡馆"),
+         String(localized: "家常小餐馆"), String(localized: "当地市场小吃"),
+         String(localized: "晚餐与葡萄酒"), String(localized: "清爽素食选择")]
     }
 
     private var inputBubble: some View {
