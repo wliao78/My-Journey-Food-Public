@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "My Journey Food";
+"NSLocationWhenInUseUsageDescription" = "Find nearby food and estimate walking or driving time.";
+"NSMicrophoneUsageDescription" = "Record spoken food requests or reviews.";
+"NSSpeechRecognitionUsageDescription" = "Turn your speech into editable text.";

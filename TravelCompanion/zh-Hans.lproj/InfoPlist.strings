@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "我在旅途-吃喝";
+"NSLocationWhenInUseUsageDescription" = "推荐附近餐饮并计算步行或驾车时间。";
+"NSMicrophoneUsageDescription" = "录入口述的餐饮要求或评价。";
+"NSSpeechRecognitionUsageDescription" = "将语音转成可编辑文字。";
