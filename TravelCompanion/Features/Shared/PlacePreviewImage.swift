@@ -9,26 +9,40 @@ struct PlacePreviewImage: View {
     var body: some View {
         Group {
             if PublicDemo.enabled {
-                ZStack {
-                    LinearGradient(colors: [.teal.opacity(0.4), .blue.opacity(0.25)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    Image(systemName: "fork.knife").font(.system(size: 36, weight: .light)).foregroundStyle(.white.opacity(0.85))
+                GeometryReader { geometry in
+                Image("DemoIllustration")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+                    .overlay(alignment: .bottomTrailing) {
+                        Text(String(localized: "示意图"))
+                            .font(.caption2)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8).padding(.vertical, 4)
+                            .background(.black.opacity(0.55), in: Capsule())
+                            .padding(8)
+                    }
+                    .accessibilityLabel(String(localized: "离线演示示意图"))
                 }
             } else if let image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
-                    .accessibilityLabel("Apple 实景预览")
+                    .accessibilityLabel(String(localized: "Apple 实景预览"))
             } else {
                 Map(initialPosition: .region(MKCoordinateRegion(
                     center: mapItem.placemark.coordinate,
                     latitudinalMeters: 950,
                     longitudinalMeters: 950
                 ))) {
-                    Marker(mapItem.name ?? "地点", coordinate: mapItem.placemark.coordinate)
+                    Marker(mapItem.name ?? String(localized: "地点"), coordinate: mapItem.placemark.coordinate)
                 }
                 .mapControlVisibility(.hidden)
                 .allowsHitTesting(false)
-                .accessibilityLabel("地点地图预览")
+                .accessibilityLabel(String(localized: "地点地图预览"))
             }
         }
         .task(id: "\(Recommendation.identity(for: mapItem))|\(offsetMeters)") {

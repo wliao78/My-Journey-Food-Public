@@ -2,7 +2,8 @@ import CoreLocation
 import Foundation
 
 struct RecommendationCacheService {
-    private let key = "recommendation-cache-v1.1"
+    // Keep generated recommendation prose separate for each app language.
+    private var key: String { "recommendation-cache-v1.1.\(PublicLanguage.code)" }
     private let defaults = UserDefaults.standard
 
     func load() -> RecommendationCache? {

@@ -41,10 +41,10 @@ struct HomeView: View {
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { inputBubble }
             .sheet(isPresented: $showingSettings, onDismiss: { requestAutomaticRefresh() }) { SettingsView() }
-            .alert("天气暂不可用", isPresented: $showingWeatherDiagnostic) {
-                Button("确定", role: .cancel) { }
+            .alert(String(localized: "天气暂不可用"), isPresented: $showingWeatherDiagnostic) {
+                Button(String(localized: "确定"), role: .cancel) { }
             } message: {
-                Text(model.weatherErrorMessage ?? "请稍后重试。")
+                Text(model.weatherErrorMessage ?? String(localized: "请稍后重试。"))
             }
             .task {
                 guard !didRequestLaunchRefresh else { return }
@@ -76,12 +76,12 @@ struct HomeView: View {
 
     private var statusHeader: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("MY JOURNEY")
+            Text(String(localized: "MY JOURNEY"))
                 .font(.caption2.bold())
                 .tracking(2.5)
                 .foregroundStyle(FoodTheme.accent)
             HStack(alignment: .center) {
-                    Text("我的旅程 — 吃喝")
+                    Text(String(localized: "我的旅程 — 吃喝"))
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                 Spacer(minLength: 8)
                 Button { showingSettings = true } label: {
@@ -90,7 +90,7 @@ struct HomeView: View {
                         .frame(width: 34, height: 34)
                         .background(.white.opacity(0.13), in: Circle())
                 }
-                .accessibilityLabel("设置")
+                .accessibilityLabel(String(localized: "设置"))
             }
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Image(systemName: "location.fill")
@@ -124,7 +124,7 @@ struct HomeView: View {
     }
 
     private var modePicker: some View {
-        Picker("出行方式", selection: $model.travelMode) {
+        Picker(String(localized: "出行方式"), selection: $model.travelMode) {
             ForEach(TravelMode.allCases) { mode in
                 Label(mode.title, systemImage: mode.symbol).tag(mode)
             }
@@ -154,7 +154,7 @@ struct HomeView: View {
                 .padding(.horizontal, 16)
             .padding(.bottom, 8)
         } else if model.isShowingCachedResults {
-            Text("正在显示上次推荐")
+            Text(String(localized: "正在显示上次推荐"))
                 .font(.footnote)
             .foregroundStyle(FoodTheme.secondaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -168,9 +168,9 @@ struct HomeView: View {
             LazyVStack(alignment: .leading, spacing: 10) {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("为你精选")
+                        Text(String(localized: "为你精选"))
                             .font(.title3.bold())
-                        Text("附近吃喝 · \(items.count) 个地点")
+                        Text(String(format: NSLocalizedString("附近吃喝 · %@ 个地点", comment: ""), String(describing: items.count)))
                             .font(.caption)
                             .foregroundStyle(FoodTheme.secondaryText)
                     }
@@ -184,12 +184,12 @@ struct HomeView: View {
                             .background(.white.opacity(0.12), in: Circle())
                     }
                     .disabled(model.isLoading)
-                    .accessibilityLabel("清除条件并刷新吃喝推荐")
+                    .accessibilityLabel(String(localized: "清除条件并刷新吃喝推荐"))
                 }
                 .padding(.bottom, 4)
 
                 if items.isEmpty && APIKeyStore().load() == nil && !model.isLoading {
-                    Text("演示推荐 · 非真实店铺")
+                    Text(String(localized: "演示推荐 · 非真实店铺"))
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(FoodTheme.accent)
                     ForEach(0..<6, id: \.self) { index in
@@ -199,7 +199,7 @@ struct HomeView: View {
                                 .foregroundStyle(FoodTheme.accent)
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(demoTitles[index]).font(.headline)
-                                Text("设置服务商与位置后，才会搜索真实地点并核对条件。")
+                                Text(String(localized: "设置服务商与位置后，才会搜索真实地点并核对条件。"))
                                     .font(.caption).foregroundStyle(FoodTheme.secondaryText)
                             }
                             Spacer(minLength: 0)
@@ -209,9 +209,9 @@ struct HomeView: View {
                     }
                 } else if items.isEmpty {
                     ContentUnavailableView(
-                        model.isLoading ? "正在寻找附近餐饮" : "暂无推荐",
+                        model.isLoading ? String(localized: "正在寻找附近餐饮") : String(localized: "暂无推荐"),
                         systemImage: "fork.knife",
-                        description: Text(model.isLoading ? "正在根据位置和条件筛选" : "点击刷新，或输入想吃喝的内容")
+                        description: Text(model.isLoading ? String(localized: "正在根据位置和条件筛选") : String(localized: "点击刷新，或输入想吃喝的内容"))
                     )
                     .frame(maxWidth: .infinity, minHeight: 280)
                 } else {
@@ -227,7 +227,7 @@ struct HomeView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    Text("已到最后一条 · 继续上拉刷新")
+                    Text(String(localized: "已到最后一条 · 继续上拉刷新"))
                         .font(.footnote)
                         .foregroundStyle(FoodTheme.secondaryText)
                         .frame(maxWidth: .infinity)
@@ -237,7 +237,7 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             .padding(.top, 8)
             .padding(.bottom, 16)
-        }
+        }.defaultScrollAnchor(PublicLanguage.qaScrollBottom ? .bottom : .top)
         .onScrollGeometryChange(for: Bool.self) { geometry in
             let remaining = geometry.contentSize.height - geometry.contentOffset.y - geometry.containerSize.height
             return remaining <= 12
@@ -265,13 +265,13 @@ struct HomeView: View {
                 .font(.subheadline.weight(.semibold))
                 .frame(width: 28, height: 28)
                 .foregroundStyle(FoodTheme.accent)
-                .accessibilityLabel("吃喝")
-            TextField("想吃什么或喝什么？", text: $model.context, axis: .vertical)
+                .accessibilityLabel(String(localized: "吃喝"))
+            TextField(String(localized: "想吃什么或喝什么？"), text: $model.context, axis: .vertical)
                 .lineLimit(1...4)
                 .focused($inputFocused)
                 .submitLabel(.send)
                 .onSubmit { Task { await submitRequest() } }
-                .accessibilityLabel("补充吃喝推荐条件")
+                .accessibilityLabel(String(localized: "补充吃喝推荐条件"))
             Button {
                 inputFocused = false
                 if speech.isListening { speech.stop() }
@@ -280,13 +280,13 @@ struct HomeView: View {
                 Image(systemName: speech.isListening ? "stop.fill" : "mic.fill")
                     .frame(width: 28, height: 28)
             }
-            .accessibilityLabel(speech.isListening ? "停止听写" : "开始听写")
+            .accessibilityLabel(speech.isListening ? String(localized: "停止听写") : String(localized: "开始听写"))
             Button { Task { await submitRequest() } } label: {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.title2)
             }
             .disabled(model.isLoading || model.context.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .accessibilityLabel("提交吃喝条件")
+            .accessibilityLabel(String(localized: "提交吃喝条件"))
         }
         .padding(12)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24))
@@ -370,7 +370,7 @@ private struct RecommendationCard: View {
                         .lineLimit(2)
                 }
                 if let myReview, !myReview.isEmpty {
-                    Text("我的评价：\(myReview)")
+                    Text(String(format: NSLocalizedString("我的评价：%@", comment: ""), String(describing: myReview)))
                         .font(.caption2)
                         .foregroundStyle(FoodTheme.secondaryText)
                         .lineLimit(1)

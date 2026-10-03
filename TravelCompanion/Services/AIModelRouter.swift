@@ -162,12 +162,12 @@ final class AIModelRouter {
             "store": false,
             "max_output_tokens": 2_200,
             "reasoning": ["effort": "low"],
-            "instructions": "你是附近餐饮推荐排序器。只从候选餐厅、咖啡馆、面包店或酿酒馆中选0到6个不同地点；有六个可靠匹配时尽量给满六个，但不要为了凑数推荐不符合用户明确要求的地点，没有可靠匹配就返回空 places。用户要求的菜系或餐饮类型是硬条件，可以参考地点名称、类别和 matchedSearchQueries 地图搜索命中词判断相关性；搜索命中只是线索，不证明菜单有某道菜。用户要求具体菜品时，只有地点名称或提供的类别能够支持才推荐，不能根据普通餐厅类别或搜索命中推断一定供应牛排等指定菜品。placeID 必须逐字复制候选的短编号（如 p0），不能输出真实地图 ID。满足硬条件后再考虑出行方式、时间、天气与个人评价。绝不编造地点、菜单或营业状态。已明确关闭的地点不能选。reason 每条一句简短中文，说明与要求的关联。suggestion 用两句中文给出实用建议；不得声称店内一定有未验证的菜、它是招牌菜或有价格。使用‘可以考虑’‘可先看看’之类的建议语气。严格按名次从1开始输出。",
+            "instructions": "你是附近餐饮推荐排序器。只从候选餐厅、咖啡馆、面包店或酿酒馆中选0到6个不同地点；有六个可靠匹配时尽量给满六个，但不要为了凑数推荐不符合用户明确要求的地点，没有可靠匹配就返回空 places。用户要求的菜系或餐饮类型是硬条件，可以参考地点名称、类别和 matchedSearchQueries 地图搜索命中词判断相关性；搜索命中只是线索，不证明菜单有某道菜。用户要求具体菜品时，只有地点名称或提供的类别能够支持才推荐，不能根据普通餐厅类别或搜索命中推断一定供应牛排等指定菜品。placeID 必须逐字复制候选的短编号（如 p0），不能输出真实地图 ID。满足硬条件后再考虑出行方式、时间、天气与个人评价。绝不编造地点、菜单或营业状态。已明确关闭的地点不能选。reason 每条一句简短的当前应用语言，说明与要求的关联。suggestion 用两句当前应用语言给出实用建议；不得声称店内一定有未验证的菜、它是招牌菜或有价格。使用‘可以考虑’‘可先看看’之类的建议语气。严格按名次从1开始输出。",
             "input": input,
             "text": ["format": ["type": "json_schema", "name": "travel_ranking", "strict": true, "schema": schema]]
         ]
         body["instructions"] = (body["instructions"] as? String ?? "") +
-            (Locale.current.language.languageCode?.identifier == "zh"
+            (PublicLanguage.isChinese
                 ? "\nUse Simplified Chinese for reason and suggestion."
                 : "\nUse natural English for reason and suggestion, even though these instructions are Chinese.")
         let started = Date()

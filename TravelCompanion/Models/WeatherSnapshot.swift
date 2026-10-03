@@ -12,7 +12,7 @@ struct WeatherSnapshot: Equatable {
 
     static let unavailable = WeatherSnapshot(
         temperature: .init(value: 0, unit: .celsius),
-        conditionText: "天气暂不可用",
+        conditionText: String(localized: "天气暂不可用"),
         symbolName: "cloud",
         kind: .unknown
     )

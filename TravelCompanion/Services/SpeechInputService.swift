@@ -9,7 +9,7 @@ final class SpeechInputService: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let audioEngine = AVAudioEngine()
-    private let recognizer = SFSpeechRecognizer(locale: Locale.current)
+    private let recognizer = SFSpeechRecognizer(locale: PublicLanguage.speechLocale)
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var startGeneration = 0
@@ -26,20 +26,20 @@ final class SpeechInputService: ObservableObject {
         startGeneration += 1
         let generation = startGeneration
         guard recognizer?.isAvailable == true else {
-            errorMessage = "当前设备暂不支持语音识别。"
+            errorMessage = String(localized: "当前设备暂不支持语音识别。")
             return
         }
         let speechAllowed = await Self.requestSpeechAuthorization()
         guard generation == startGeneration else { return }
         guard speechAllowed else {
-            errorMessage = "请在系统设置中允许语音识别。"
+            errorMessage = String(localized: "请在系统设置中允许语音识别。")
             return
         }
 
         let microphoneAllowed = await AVAudioApplication.requestRecordPermission()
         guard generation == startGeneration else { return }
         guard microphoneAllowed else {
-            errorMessage = "请在系统设置中允许使用麦克风。"
+            errorMessage = String(localized: "请在系统设置中允许使用麦克风。")
             return
         }
 
@@ -63,7 +63,7 @@ final class SpeechInputService: ObservableObject {
             try audioEngine.start()
             isListening = true
         } catch {
-            errorMessage = "语音输入未能启动：\(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("语音输入未能启动：%@", comment: ""), String(describing: PublicLanguage.errorDescription(error)))
             stop()
             return
         }

@@ -52,7 +52,7 @@ final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocat
         if let locationError = error as? CLError, locationError.code == .locationUnknown {
             return
         }
-        errorMessage = error.localizedDescription
+        errorMessage = PublicLanguage.errorDescription(error)
     }
 
     private func reverseGeocode(_ location: CLLocation) async {

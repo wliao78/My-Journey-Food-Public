@@ -18,7 +18,7 @@ struct PlaceDetailView: View {
             VStack(alignment: .leading, spacing: 14) {
                 imagery
 
-                Text("餐厅详情")
+                Text(String(localized: "餐厅详情"))
                     .font(.caption.bold())
                     .tracking(2)
                     .foregroundStyle(FoodTheme.accent)
@@ -29,25 +29,25 @@ struct PlaceDetailView: View {
                     .foregroundStyle(FoodTheme.secondaryText)
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Label("可以考虑的菜品", systemImage: "fork.knife")
+                    Label(String(localized: "可以考虑的菜品"), systemImage: "fork.knife")
                         .font(.headline)
-                    Text(recommendation.suggestion.isEmpty ? "暂无菜品建议" : recommendation.suggestion)
-                    Text("AI 建议，并非已核实菜单；请以店家实际供应为准。")
+                    Text(recommendation.suggestion.isEmpty ? String(localized: "暂无菜品建议") : recommendation.suggestion)
+                    Text(String(localized: "AI 建议，并非已核实菜单；请以店家实际供应为准。"))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     if let website = recommendation.mapItem.url {
-                        Link("查看餐厅官网或菜单", destination: website)
+                        Link(String(localized: "查看餐厅官网或菜单"), destination: website)
                     }
                 }
                 .padding(16)
                 .foodPanel()
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Label("营业时间和当前状态", systemImage: "clock")
+                    Label(String(localized: "营业时间和当前状态"), systemImage: "clock")
                         .font(.headline)
-                    Text("请在 Apple 地图查看实时营业时间")
+                    Text(String(localized: "请在 Apple 地图查看实时营业时间"))
                         .foregroundStyle(.secondary)
-                    Button("在 Apple 地图查看") { openMaps() }
+                    Button(String(localized: "在 Apple 地图查看")) { openMaps() }
                 }
                 .padding(16)
                 .foodPanel()
@@ -62,8 +62,8 @@ struct PlaceDetailView: View {
                     Spacer()
                     Button {
                         UIPasteboard.general.string = recommendation.subtitle
-                        message = "地址已复制"
-                    } label: { Label("复制", systemImage: "doc.on.doc") }
+                        message = String(localized: "地址已复制")
+                    } label: { Label(String(localized: "复制"), systemImage: "doc.on.doc") }
                 }
                 .padding(16)
                 .foodPanel()
@@ -74,7 +74,7 @@ struct PlaceDetailView: View {
                 } else {
                 Map(initialPosition: .region(region)) {
                     if let currentLocation {
-                        Marker("我的位置", systemImage: "location.fill", coordinate: currentLocation.coordinate)
+                        Marker(String(localized: "我的位置"), systemImage: "location.fill", coordinate: currentLocation.coordinate)
                             .tint(.blue)
                     }
                     Marker(recommendation.title, coordinate: recommendation.mapItem.placemark.coordinate)
@@ -84,7 +84,7 @@ struct PlaceDetailView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .onTapGesture { openMaps() }
                 Button { openMaps() } label: {
-                    Label("在 Apple 地图中\(recommendation.travelMode == .walking ? "步行" : "驾车")导航", systemImage: "map.fill")
+                    Label(String(format: NSLocalizedString("在 Apple 地图中%@导航", comment: ""), String(describing: recommendation.travelMode.title)), systemImage: "map.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -94,11 +94,11 @@ struct PlaceDetailView: View {
                 reviewSection
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Label("其他用户的代表评价", systemImage: "person.2")
+                    Label(String(localized: "其他用户的代表评价"), systemImage: "person.2")
                         .font(.headline)
-                    Text("当前数据源未提供可核实的用户评价")
+                    Text(String(localized: "当前数据源未提供可核实的用户评价"))
                         .foregroundStyle(.secondary)
-                    Button("在 Apple 地图查看评价") { openMaps() }
+                    Button(String(localized: "在 Apple 地图查看评价")) { openMaps() }
                 }
                 .padding(16)
                 .foodPanel()
@@ -106,7 +106,7 @@ struct PlaceDetailView: View {
                 if let message { Text(message).font(.footnote).foregroundStyle(.secondary) }
             }
             .padding(16)
-        }
+        }.defaultScrollAnchor(PublicLanguage.qaScrollBottom ? .bottom : .top)
         .scrollDismissesKeyboard(.interactively)
         .background { FoodTheme.background }
         .foregroundStyle(.white)
@@ -117,11 +117,11 @@ struct PlaceDetailView: View {
         .toolbar {
             if reviewFocused {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("完成") { reviewFocused = false }
+                    Button(String(localized: "完成")) { reviewFocused = false }
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("完成") { reviewFocused = false }
+                    Button(String(localized: "完成")) { reviewFocused = false }
                 }
             }
         }
@@ -152,31 +152,31 @@ struct PlaceDetailView: View {
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 18))
-        .accessibilityLabel("Apple 地图实景与三个地图预览，点击查看来源")
+        .accessibilityLabel(String(localized: "Apple 地图实景与三个地图预览，点击查看来源"))
     }
 
     private var reviewSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("我的评价")
+            Text(String(localized: "我的评价"))
                 .font(.title2.bold())
             ForEach(placeFeedback, id: \.id) { entry in
                 VStack(alignment: .leading, spacing: 8) {
                     Text(entry.createdAt.formatted(date: .abbreviated, time: .shortened))
                         .font(.caption.bold()).foregroundStyle(.secondary)
                     Text(entry.note)
-                    Button("删除这条评价", role: .destructive) {
+                    Button(String(localized: "删除这条评价"), role: .destructive) {
                         modelContext.delete(entry)
                         do {
                             try modelContext.save()
-                            message = "评价已删除"
-                        } catch { message = "删除失败，请重试" }
+                            message = String(localized: "评价已删除")
+                        } catch { message = String(localized: "删除失败，请重试") }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
                 .foodPanel(cornerRadius: 14)
             }
-            Text("添加新评价")
+            Text(String(localized: "添加新评价"))
                 .font(.subheadline.bold())
             TextEditor(text: $note)
                 .frame(minHeight: 110)
@@ -184,15 +184,15 @@ struct PlaceDetailView: View {
                 .scrollContentBackground(.hidden)
                 .foodPanel(cornerRadius: 14)
                 .focused($reviewFocused)
-                .accessibilityLabel("输入我的评价")
+                .accessibilityLabel(String(localized: "输入我的评价"))
             HStack {
-                Button(speech.isListening ? "停止语音" : "语音输入") {
+                Button(speech.isListening ? String(localized: "停止语音") : String(localized: "语音输入")) {
                     reviewFocused = false
                     if speech.isListening { speech.stop() }
                     else { Task { await speech.start() } }
                 }
                 .buttonStyle(.bordered)
-                Button("保存评价") { saveFeedback() }
+                Button(String(localized: "保存评价")) { saveFeedback() }
                     .buttonStyle(.borderedProminent)
                     .disabled(note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
@@ -248,10 +248,25 @@ struct PlaceDetailView: View {
         do {
             try modelContext.save()
             note = ""
-            message = "评价已保存"
+            message = String(localized: "评价已保存")
         } catch {
             modelContext.delete(newFeedback)
-            message = "保存失败，请重试"
+            message = String(localized: "保存失败，请重试")
         }
     }
 }
+#if DEBUG
+@MainActor
+enum PublicLocalizationQA {
+    static var screen: AnyView? {
+        let args = ProcessInfo.processInfo.arguments
+        guard let index = args.firstIndex(of: "-LocalizationQA"), args.indices.contains(index + 1) else { return nil }
+        let route = args[index + 1]
+        if route == "settings" { return AnyView(SettingsView()) }
+        let model = HomeViewModel()
+        model.loadDemo()
+        guard let item = model.recommendations[.eat]?.first else { return nil }
+        return AnyView(NavigationStack { PlaceDetailView(recommendation: item, currentLocation: nil) })
+    }
+}
+#endif

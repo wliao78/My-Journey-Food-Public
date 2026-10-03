@@ -90,7 +90,7 @@ struct RecommendationService {
             candidates.append(Recommendation(
                 mapItem: item, category: category, travelMode: travelMode,
                 travelTime: nil, distance: distance, score: 0,
-                reason: "正在根据你的条件筛选…"
+                reason: String(localized: "正在根据你的条件筛选…")
             ))
         }
         guard !candidates.isEmpty else { return [] }

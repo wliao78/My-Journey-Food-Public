@@ -29,7 +29,13 @@ struct TravelCompanionApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Group {
+#if DEBUG
+                if let preview = PublicLocalizationQA.screen { preview } else { ContentView() }
+#else
+                ContentView()
+#endif
+            }.environment(\.locale, PublicLanguage.locale)
         }
         .modelContainer(modelContainer)
     }

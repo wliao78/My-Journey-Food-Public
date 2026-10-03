@@ -25,7 +25,7 @@ struct WeatherService {
 
         return WeatherSnapshot(
             temperature: temperature,
-            conditionText: weather.condition.description,
+            conditionText: PublicLanguage.weather(weather.condition.rawValue),
             symbolName: weather.symbolName,
             kind: kind
         )

@@ -1,0 +1,11 @@
+Version: 1.0 (1)
+Apple app ID: 6818726275
+Status verified on 2026-10-03: Waiting for Review
+Submission ID: db1c6b7b-ef46-4421-93fe-526b2145d461
+English store name: My Journey Food
+Simplified Chinese store name: 我在旅途-吃喝指南
+Pricing: Free
+Availability: All 175 countries or regions, subject to Apple and local requirements
+Release: Automatically after App Review approval
+Store descriptions and screenshots: English (U.S.) and Simplified Chinese
+Note: Submitted for review; not yet approved or released.

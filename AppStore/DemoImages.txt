@@ -1,0 +1,10 @@
+Offline demo image
+
+Generated with the built-in image generation tool, October 2, 2026.
+Prompt: Editorial travel illustration. Cafe table with noodles, vegetables and coffee on a sunlit terrace. Landscape composition,
+polished soft textured illustration, natural muted colors. No people, text,
+logos or watermark. Clearly illustrative, not a photograph of a real place.
+
+Bundled asset: DemoIllustration.imageset/image.png
+Use only for demo data; label as Illustration / 示意图.
+No network request or API key is needed to display this bundled asset.

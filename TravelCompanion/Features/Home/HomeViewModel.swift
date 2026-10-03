@@ -100,7 +100,7 @@ final class HomeViewModel: ObservableObject {
                 if (error as NSError).domain == MKError.errorDomain {
                     errorMessage = String(localized: "地图服务暂时无法搜索吃喝地点，请稍后刷新。已有推荐仍可查看。")
                 } else {
-                    errorMessage = error.localizedDescription
+                    errorMessage = PublicLanguage.errorDescription(error)
                 }
                 isShowingCachedResults = !recommendations.isEmpty
             }
