@@ -68,6 +68,10 @@ struct PlaceDetailView: View {
                 .padding(16)
                 .foodPanel()
 
+                if PublicDemo.enabled {
+                    Label(PublicDemo.notice, systemImage: "wifi.slash")
+                        .padding().frame(maxWidth: .infinity)
+                } else {
                 Map(initialPosition: .region(region)) {
                     if let currentLocation {
                         Marker("我的位置", systemImage: "location.fill", coordinate: currentLocation.coordinate)
@@ -84,6 +88,8 @@ struct PlaceDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+
+                }
 
                 reviewSection
 
@@ -220,6 +226,7 @@ struct PlaceDetailView: View {
     }
 
     private func openMaps() {
+        guard !PublicDemo.enabled else { message = PublicDemo.notice; return }
         recommendation.mapItem.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: recommendation.travelMode == .walking
                 ? MKLaunchOptionsDirectionsModeWalking

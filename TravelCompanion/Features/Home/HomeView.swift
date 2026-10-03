@@ -40,7 +40,7 @@ struct HomeView: View {
                 }
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { inputBubble }
-            .sheet(isPresented: $showingSettings) { SettingsView() }
+            .sheet(isPresented: $showingSettings, onDismiss: { requestAutomaticRefresh() }) { SettingsView() }
             .alert("天气暂不可用", isPresented: $showingWeatherDiagnostic) {
                 Button("确定", role: .cancel) { }
             } message: {
@@ -96,7 +96,7 @@ struct HomeView: View {
                 Image(systemName: "location.fill")
                     .font(.caption)
                     .foregroundStyle(FoodTheme.accent)
-                Text(locationService.placeName)
+                Text(PublicDemo.enabled ? PublicDemo.title : locationService.placeName)
                     .font(.title3.weight(.semibold))
                     .lineLimit(1)
                 Spacer(minLength: 4)
@@ -308,6 +308,7 @@ struct HomeView: View {
     }
 
     private func requestAutomaticRefresh() {
+        if PublicDemo.enabled { model.loadDemo(); return }
         pendingAutomaticRefresh = true
         if locationService.location == nil { locationService.requestLocation() }
         startAutomaticRefreshIfPossible()
@@ -356,7 +357,7 @@ private struct RecommendationCard: View {
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(FoodTheme.accent)
                 }
-                Text(recommendation.formattedDistance + " · " + recommendation.formattedTravelTime)
+                Text(PublicDemo.enabled ? PublicDemo.title : recommendation.formattedDistance + " · " + recommendation.formattedTravelTime)
                     .font(.caption)
                     .foregroundStyle(FoodTheme.secondaryText)
                 Text(recommendation.reason)

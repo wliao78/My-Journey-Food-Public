@@ -19,6 +19,7 @@ final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocat
     }
 
     func requestLocation() {
+        guard !PublicDemo.enabled else { return }
         switch manager.authorizationStatus {
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
@@ -32,6 +33,7 @@ final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocat
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        guard !PublicDemo.enabled else { return }
         authorizationStatus = manager.authorizationStatus
         if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
             manager.requestLocation()
@@ -39,6 +41,7 @@ final class LocationService: NSObject, ObservableObject, @preconcurrency CLLocat
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard !PublicDemo.enabled else { return }
         guard let location = locations.last else { return }
         self.location = location
         errorMessage = nil

@@ -1,0 +1,15 @@
+One of the best travel questions is also the hardest: Where should we eat around here?
+
+My Journey Food helps you explore nearby food and drink. Choose walking or driving, scroll through recommendation cards, and check the location, distance, and route before heading out. Refresh when you want a new set of ideas, and save your own notes about what you tried.
+
+Highlights:
+• Nearby food discovery tailored to walking or driving
+• Six suggestions per round in a scrollable card feed
+• Addresses, map context, and navigation handoff
+• Personal notes and ratings
+• English and Simplified Chinese interfaces that follow your iPhone language
+• Clearly labeled sample cards before AI is configured
+
+Getting started: Allow location access to explore nearby options, choose a travel mode, and refresh. To enable AI recommendations, choose OpenAI, Claude, Gemini, DeepSeek, Qwen, Kimi, GLM, Doubao, or ERNIE in Settings, enter your own API key, and consent to sharing the information needed for a request. Your provider may charge for API usage.
+
+Important: Opening hours, menus, prices, distances, and AI explanations can change or be inaccurate. Check important details with the venue before visiting. Sample cards are illustrative, not real businesses or verified recommendations. Read the privacy policy for details about location and third-party AI use.

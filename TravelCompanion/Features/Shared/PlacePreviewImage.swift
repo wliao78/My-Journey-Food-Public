@@ -8,7 +8,12 @@ struct PlacePreviewImage: View {
 
     var body: some View {
         Group {
-            if let image {
+            if PublicDemo.enabled {
+                ZStack {
+                    LinearGradient(colors: [.teal.opacity(0.4), .blue.opacity(0.25)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    Image(systemName: "fork.knife").font(.system(size: 36, weight: .light)).foregroundStyle(.white.opacity(0.85))
+                }
+            } else if let image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
@@ -27,6 +32,7 @@ struct PlacePreviewImage: View {
             }
         }
         .task(id: "\(Recommendation.identity(for: mapItem))|\(offsetMeters)") {
+            guard !PublicDemo.enabled else { return }
             let request: MKLookAroundSceneRequest
             if offsetMeters == 0 {
                 request = MKLookAroundSceneRequest(mapItem: mapItem)

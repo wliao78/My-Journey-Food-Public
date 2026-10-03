@@ -22,7 +22,7 @@ Description:
 • 中英文界面随 iPhone 语言设置切换
 • 未配置 AI 时可查看明确标注的演示卡片
 
-使用方法：允许定位以查找附近地点；选择出行方式并刷新。若使用 AI 推荐，请在设置中选择 OpenAI、Anthropic Claude 或 Google Gemini，填写自己的 API Key，并同意向该服务商发送生成推荐所需的信息。不同服务商可能产生 API 费用。
+使用方法：允许定位以查找附近地点；选择出行方式并刷新。若使用 AI 推荐，请在设置中选择 OpenAI、Claude、Gemini、DeepSeek、通义千问、Kimi、智谱、豆包或文心，填写自己的 API Key，并同意向该服务商发送生成推荐所需的信息。不同服务商可能产生 API 费用。
 
 请注意：营业时间、菜单、价格、距离和推荐理由可能变化或出现错误，请在出发前向商家核实。演示卡片不是实际营业商家，也不构成真实推荐。定位与第三方 AI 的数据使用方式详见隐私政策。
 
@@ -46,9 +46,16 @@ Highlights:
 • English and Simplified Chinese interfaces that follow your iPhone language
 • Clearly labeled sample cards before AI is configured
 
-Getting started: Allow location access to explore nearby options, choose a travel mode, and refresh. To enable AI recommendations, choose OpenAI, Anthropic Claude, or Google Gemini in Settings, enter your own API key, and consent to sharing the information needed for a request. Your provider may charge for API usage.
+Getting started: Allow location access to explore nearby options, choose a travel mode, and refresh. To enable AI recommendations, choose OpenAI, Claude, Gemini, DeepSeek, Qwen, Kimi, GLM, Doubao, or ERNIE in Settings, enter your own API key, and consent to sharing the information needed for a request. Your provider may charge for API usage.
 
 Important: Opening hours, menus, prices, distances, and AI explanations can change or be inaccurate. Check important details with the venue before visiting. Sample cards are illustrative, not real businesses or verified recommendations. Read the privacy policy for details about location and third-party AI use.
+
+## Release links
+
+Support URL: https://wliao78.github.io/My-Journey-Support/#support
+Privacy URL (zh-Hans): https://wliao78.github.io/My-Journey-Support/#privacy-zh
+Privacy URL (en-US): https://wliao78.github.io/My-Journey-Support/#privacy-en
+Contact email: tinyworm@gmail.com
 
 ## Screenshot plan
 

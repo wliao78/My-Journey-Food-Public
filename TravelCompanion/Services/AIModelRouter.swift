@@ -81,6 +81,9 @@ final class AIModelRouter {
 
     func rank(_ context: AIContext) async throws -> [AIRankedPlace] {
         guard let key = keyStore.load(), !key.isEmpty else { throw AIRecommendationError.missingKey }
+        guard !PublicDemo.enabled else {
+            throw NSError(domain: "OfflineDemo", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "演示模式不会处理你的输入，请关闭演示模式以获取真实 AI 结果。")])
+        }
         guard PublicAIConsent.granted else {
             throw NSError(domain: "AIConsent", code: 1, userInfo: [NSLocalizedDescriptionKey:
                 String(localized: "请先在设置中同意向所选 AI 服务商发送资料。")])

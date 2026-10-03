@@ -24,6 +24,10 @@ final class HomeViewModel: ObservableObject {
     private var categoryContexts: [RecommendationCategory: String] = [:]
 
     init() {
+        if PublicDemo.enabled {
+            loadDemo()
+            return
+        }
         recommendations = cacheService.loadRecommendations()
         isShowingCachedResults = !recommendations.isEmpty
         if APIKeyStore().load() == nil {
@@ -32,6 +36,11 @@ final class HomeViewModel: ObservableObject {
     }
 
     func submitRequest(for category: RecommendationCategory, location: CLLocation?, feedback: [PlaceFeedback]) async {
+        if PublicDemo.enabled {
+            context = ""
+            errorMessage = String(localized: "演示模式不会处理你的输入，请关闭演示模式以获取真实 AI 结果。")
+            return
+        }
         let draft = context.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !draft.isEmpty else { return }
         if draft.hasPrefix("sk-") {
@@ -50,6 +59,7 @@ final class HomeViewModel: ObservableObject {
     }
 
     func refresh(_ category: RecommendationCategory, location: CLLocation?, feedback: [PlaceFeedback]) async {
+        if PublicDemo.enabled { loadDemo(); return }
         guard let location else { return }
         guard !isLoading else { return }
         guard APIKeyStore().load() != nil else {
@@ -109,7 +119,24 @@ final class HomeViewModel: ObservableObject {
         await updateWeather(at: location)
     }
 
+    func loadDemo() {
+        let titles = ["街角早餐店", "本地风味餐厅", "咖啡与甜点", "轻食午餐", "晚餐小馆", "周末早午餐"]
+        recommendations[.eat] = titles.enumerated().map { index, title in
+            let item = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0)))
+            item.name = NSLocalizedString(title, comment: "Fictional offline venue")
+            return Recommendation(mapItem: item, category: .eat, travelMode: travelMode,
+                travelTime: nil, distance: 0, score: 0,
+                reason: PublicDemo.notice,
+                suggestion: NSLocalizedString(["尝试热早餐、粥或鸡蛋，按个人饮食需求选择。", "比较当日特色与小份菜，点餐前确认过敏原。", "一杯咖啡搭配小份甜点，留意咖啡因与糖分。", "选择蔬菜、蛋白质与主食搭配的轻食。", "慢慢享用一顿晚餐，提前询问菜单与价格。", "早餐与午餐之间的悠闲用餐体验。"][index], comment: "Demo dining suggestion"),
+                cachedSubtitle: PublicDemo.notice, identityOverride: "demo.food.\(index)")
+        }
+        recommendationTravelMode = travelMode
+        errorMessage = nil
+        isShowingCachedResults = false
+    }
+
     private func updateWeather(at location: CLLocation) async {
+        guard !PublicDemo.enabled else { return }
         do {
             weather = try await weatherService.currentWeather(at: location)
             weatherErrorMessage = nil

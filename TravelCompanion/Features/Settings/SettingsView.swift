@@ -33,6 +33,7 @@ struct SettingsView: View {
                     }
                     Label(hasSavedKey ? "密钥已保存" : "添加 API 密钥", systemImage: "key.fill")
                         .font(.headline)
+                    PublicAIConfigurationView(provider: PublicAIProvider.selected)
                     SecureField("输入 API Key", text: $keyInput)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -82,6 +83,9 @@ struct SettingsView: View {
                     Text("只有同意后才会发送位置、时间、天气、输入条件和评价以生成推荐。可随时关闭；关闭后仍可查看演示内容。")
                         .font(.footnote)
                     if let message { Text(message).foregroundStyle(.secondary) }
+                    Link("隐私政策", destination: URL(string: "https://wliao78.github.io/My-Journey-Support/#privacy-" + (Locale.current.language.languageCode?.identifier == "zh" ? "zh" : "en"))!)
+                    Link("使用支持", destination: URL(string: "https://wliao78.github.io/My-Journey-Support/#support")!)
+                    Link("联系开发者", destination: URL(string: "mailto:tinyworm@gmail.com")!)
                     }
                     .padding(18)
                     .foodPanel()
